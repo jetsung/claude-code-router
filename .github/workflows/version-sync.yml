@@ -5,6 +5,9 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write   # 关键：允许 push 到仓库内容
+  
 jobs:
   check_version:
     runs-on: ubuntu-24.04
@@ -12,10 +15,10 @@ jobs:
       new_version: ${{ steps.check.outputs.new_version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: 'main'
-          token: ${{ secrets.PAT }}
+        uses: actions/checkout@v6
+        # with:
+        #   ref: 'main'
+        #   token: ${{ secrets.PAT }}
       - name: Get latest npm version
         id: npm
         run: |
@@ -42,10 +45,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: 'debug'
-          token: ${{ secrets.PAT }}
+        uses: actions/checkout@v6
       - name: Update version.txt
         run: |
           echo "${{ needs.check_version.outputs.new_version }}" > version.txt

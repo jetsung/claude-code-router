@@ -1,6 +1,10 @@
 name: Docker-Release
 
 on:
+  workflow_run: # 新增这个触发器
+    workflows: ["Version Sync"] # 必须和你的 Version Sync workflow 的 name 完全一致
+    types:
+      - completed
   push:
     branches:
       - 'main'
