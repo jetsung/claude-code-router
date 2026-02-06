@@ -21,6 +21,8 @@
     | **Tencent Cloud Container Registry（SG）**                                                       | `sgccr.ccs.tencentyun.com/jetsung/claude-code-router`             |
     | **Aliyun Container Registry（GZ）**                                                              | `registry.cn-guangzhou.aliyuncs.com/jetsung/claude-code-router` |
 
+**注意：** 原作者已提供 [Docker 镜像](https://hub.docker.com/r/musistudio/claude-code-router)，推荐使用。
+
 #### 基本使用（使用默认配置）
 
 ```bash
@@ -30,8 +32,6 @@ docker run -p 3456:3456 jetsung/claude-code-router
 #### 使用 Docker Compose
 
 ```yaml
-version: '3.8'
-
 services:
   claude-code-router:
     image: jetsung/claude-code-router:latest
@@ -66,7 +66,7 @@ volumes:
 mkdir -p ./config
 
 # 复制并编辑配置文件
-docker run --rm jetsung/claude-code-router cat /root/.claude-code-router/config.json > ./config/config.json
+docker run --rm --entrypoint "" jetsung/claude-code-router cat /root/.claude-code-router/config.json > ./config/config.json
 # 编辑配置文件
 vim ./config/config.json
 
@@ -251,3 +251,13 @@ docker run -v claude-config:/root/.claude-code-router -p 3456:3456 jetsung/claud
 ```bash
 docker run -v /your/local/path:/root/.claude-code-router -p 3456:3456 jetsung/claude-code-router
 ```
+
+## 常见问题
+### 无法启动，并出现 `claude-code-router server is running` 字样
+其 `2.0.0+` 以上版本，启用了通过以 `pid` 文件是否存在来判断服务是否启动。但实际情况是，文件存在，但服务未启动。故需要删除此文件
+```bash
+docker exec claude-code-router rm /root/.claude-code-router/.claude-code-router.pid
+```
+
+- [`processCheck.ts`](https://github.com/musistudio/claude-code-router/blob/main/packages/cli/src/utils/processCheck.ts#L41)
+- [`constants.ts`](https://github.com/musistudio/claude-code-router/blob/main/packages/shared/src/constants.ts#L12C46-L12C69)

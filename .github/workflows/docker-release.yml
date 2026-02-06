@@ -1,16 +1,17 @@
 name: Docker-Release
 
 on:
-  workflow_run: # 新增这个触发器
-    workflows: ["Version Sync"] # 必须和你的 Version Sync workflow 的 name 完全一致
-    types:
-      - completed
   push:
     branches:
       - 'main'
     paths:
-      - 'version.txt'
+      - 'Dockerfile'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Docker image version'
+        required: false
+        default: ''
 
 env:
   branch: latest
@@ -39,8 +40,11 @@ jobs:
       - name: Get version
         id: get_version
         run: |
-          version=$(cat version.txt)
-          echo "version=${version}" >> $GITHUB_OUTPUT
+          VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="latest"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -105,10 +109,10 @@ jobs:
           echo "skip=false" >> $GITHUB_OUTPUT
         fi
     - name: Install Skopeo
-      if: steps.check_tencent.outputs.skip != 'true'
+      if: steps.check_dockerhub.outputs.skip != 'true'
       uses: jetsung/install-skopeo@v1
     - name: Check Skopeo
-      if: steps.check_tencent.outputs.skip != 'true'
+      if: steps.check_dockerhub.outputs.skip != 'true'
       run: |
         skopeo --version
     - name: Login to Docker Hub
@@ -184,10 +188,10 @@ jobs:
           echo "skip=false" >> $GITHUB_OUTPUT
         fi
     - name: Install Skopeo
-      if: steps.check_tencent.outputs.skip != 'true'
+      if: steps.check_aliyun.outputs.skip != 'true'
       uses: jetsung/install-skopeo@v1
     - name: Check Skopeo
-      if: steps.check_tencent.outputs.skip != 'true'
+      if: steps.check_aliyun.outputs.skip != 'true'
       run: |
         skopeo --version
     - name: Login to Aliyun
