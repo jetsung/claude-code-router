@@ -261,3 +261,9 @@ docker exec claude-code-router rm /root/.claude-code-router/.claude-code-router.
 
 - [`processCheck.ts`](https://github.com/musistudio/claude-code-router/blob/main/packages/cli/src/utils/processCheck.ts#L41)
 - [`constants.ts`](https://github.com/musistudio/claude-code-router/blob/main/packages/shared/src/constants.ts#L12C46-L12C69)
+
+## 仓库镜像
+
+- [MyCode](https://git.jetsung.com/jetsung/claude-code-router)
+- [GitCode](https://gitcode.com/jetsung/claude-code-router)
+- [GitHub](https://github.com/jetsung/claude-code-router)
